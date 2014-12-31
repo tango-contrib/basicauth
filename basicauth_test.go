@@ -23,7 +23,7 @@ func TestBasicAuthCorrect(t *testing.T) {
 	recorder.Body = buff
 
 	tg := tango.Classic()
-	tg.Use(NewBasicAuth(user, pass))
+	tg.Use(New(user, pass))
 	tg.Get("/", new(AuthAction))
 
 	req, err := http.NewRequest("GET", "http://localhost:8000/", nil)
@@ -44,7 +44,7 @@ func TestBasicAuthError(t *testing.T) {
 	recorder.Body = buff
 
 	tg := tango.Classic()
-	tg.Use(NewBasicAuth("lunny", "lunny"))
+	tg.Use(New("lunny", "lunny"))
 	tg.Get("/", new(AuthAction))
 
 	req, err := http.NewRequest("GET", "http://localhost:8000/", nil)
@@ -70,7 +70,7 @@ func TestBasicAuthNoAuth(t *testing.T) {
 	recorder.Body = buff
 
 	tg := tango.Classic()
-	tg.Use(NewBasicAuth("lunny", "lunny"))
+	tg.Use(New("lunny", "lunny"))
 	tg.Get("/", new(NoAuthAction))
 
 	req, err := http.NewRequest("GET", "http://localhost:8000/", nil)

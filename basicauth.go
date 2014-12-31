@@ -28,7 +28,7 @@ type BasicAuth struct {
 	Password string
 }
 
-func NewBasicAuth(name, pass string) *BasicAuth {
+func New(name, pass string) *BasicAuth {
 	return &BasicAuth{"Restricted", name, pass}
 }
 
