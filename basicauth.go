@@ -1,13 +1,13 @@
 package basicauth
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/base64"
+	"fmt"
 	"net/http"
 	"strings"
-	"encoding/base64"
-	"crypto/sha256"
-	"bytes"
-	"crypto/subtle"
-	"fmt"
 
 	"github.com/lunny/tango"
 )
@@ -18,13 +18,14 @@ type Auther interface {
 
 type NoAuth struct {
 }
-func(NoAuth) AskAuth() bool {
+
+func (NoAuth) AskAuth() bool {
 	return false
 }
 
 type BasicAuth struct {
-	Realm string
-	User string
+	Realm    string
+	User     string
 	Password string
 }
 
@@ -81,23 +82,19 @@ func (b *BasicAuth) Handle(ctx *tango.Context) {
 				return
 			}
 		}
+	}
 
-		if b.authenticate(ctx.Req()) {
-			ctx.Next()
-			return
-		}
-
-		ctx.Header().Set("WWW-Authenticate", fmt.Sprintf(`Basic realm=%q`, b.Realm))
-		ctx.Unauthorized()
+	if b.authenticate(ctx.Req()) {
+		ctx.Next()
 		return
 	}
 
-	ctx.Next()
+	ctx.Header().Set("WWW-Authenticate", fmt.Sprintf(`Basic realm=%q`, b.Realm))
+	ctx.Unauthorized()
+	return
 }
 
 // defaultUnauthorizedHandler provides a default HTTP 401 Unauthorized response.
 func defaultUnauthorizedHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 }
-
-
